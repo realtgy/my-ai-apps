@@ -10,7 +10,7 @@ function App() {
         setMessage(data.message);
       });
   }, []);
-  return <div>{message}</div>;
+  return <div className="font-bold self-center text-3xl p-20">{message}</div>;
 }
 
 export default App;

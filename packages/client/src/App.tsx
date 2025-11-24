@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import "./App.css";
+import { Button } from "@/components/ui/button";
 
 function App() {
   const [message, setMessage] = useState("!!");
@@ -10,7 +11,11 @@ function App() {
         setMessage(data.message);
       });
   }, []);
-  return <div className="font-bold self-center text-3xl p-20">{message}</div>;
+  return (
+    <div className="flex min-h-svh flex-col items-center justify-center">
+      <Button>{message}</Button>
+    </div>
+  );
 }
 
 export default App;

@@ -1,8 +1,8 @@
 import { Button } from './button';
-import { FaArrowUp, FaSpinner } from 'react-icons/fa';
+import { FaArrowUp } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
-import { useRef } from 'react';
+import { useRef, useEffect } from 'react';
 import { useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 
@@ -19,9 +19,15 @@ type Message = {
 const ChatBot = () => {
    const [messages, setMessages] = useState<Message[]>([]);
    const [isBotThinking, setIsBotThinking] = useState(false);
-
+   const formRef = useRef<HTMLFormElement>(null);
    const { register, handleSubmit, reset, formState } = useForm<FormData>();
    const conversationId = useRef<string>(crypto.randomUUID());
+
+   // 自动滚动到最新消息
+   useEffect(() => {
+      formRef?.current?.scrollIntoView({ behavior: 'smooth' });
+   });
+
    const onSubmit = async (formData: FormData) => {
       setIsBotThinking(true);
       setMessages((prev) => [
@@ -69,6 +75,7 @@ const ChatBot = () => {
          </div>
 
          <form
+            ref={formRef}
             className="flex flex-col gap-2 items-end border-2 p-4 rounded-3xl"
             onSubmit={handleSubmit(onSubmit)}
             onKeyDown={onKeyDown}

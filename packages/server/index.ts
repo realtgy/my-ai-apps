@@ -30,11 +30,8 @@ app.post('/api/chat', async (req: Request, res: Response) => {
    }
    const { conversationId, prompt } = req.body;
    try {
-      const assistantContent = await chatService.sendMessage(
-         conversationId,
-         prompt
-      );
-      res.json({ message: assistantContent });
+      const resonse = await chatService.sendMessage(conversationId, prompt);
+      res.json(resonse);
    } catch (error) {
       console.error('Error in chat API:', error);
       return res.status(500).json({ error: 'Internal server error' });

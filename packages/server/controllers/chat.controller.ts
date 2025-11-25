@@ -25,8 +25,8 @@ export const chatController = {
       }
       const { conversationId, prompt } = req.body;
       try {
-         const resonse = await chatService.sendMessage(conversationId, prompt);
-         res.json(resonse);
+         const response = await chatService.sendMessage(conversationId, prompt);
+         res.json(response);
       } catch (error) {
          console.error('Error in chat API:', error);
          return res.status(500).json({ error: 'Internal server error' });

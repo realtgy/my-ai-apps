@@ -1,8 +1,7 @@
 import express from 'express';
 import type { Request, Response } from 'express';
 import dotenv from 'dotenv';
-import z from 'zod';
-import { chatService } from './services/chat.service';
+import { chatController } from './controllers/chat.controller';
 
 dotenv.config();
 const app = express();
@@ -10,33 +9,7 @@ const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
-const schema = z.object({
-   prompt: z
-      .string()
-      .trim()
-      .min(1, 'Prompt is required')
-      .max(1000, 'Prompt must be less than 1000 characters'),
-   conversationId: z
-      .string()
-      .trim()
-      .uuid('Conversation ID must be a valid UUID')
-      .optional(),
-});
-
-app.post('/api/chat', async (req: Request, res: Response) => {
-   const parseResult = schema.safeParse(req.body);
-   if (!parseResult.success) {
-      return res.status(400).json({ parseResult: parseResult.error.format() });
-   }
-   const { conversationId, prompt } = req.body;
-   try {
-      const resonse = await chatService.sendMessage(conversationId, prompt);
-      res.json(resonse);
-   } catch (error) {
-      console.error('Error in chat API:', error);
-      return res.status(500).json({ error: 'Internal server error' });
-   }
-});
+app.post('/api/chat', chatController.sendMessage);
 
 app.get('/api/hello', (req: Request, res: Response) => {
    res.json({

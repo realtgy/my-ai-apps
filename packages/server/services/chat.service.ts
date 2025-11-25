@@ -9,6 +9,11 @@ const client = new OpenAI({
    baseURL: 'https://api.poe.com/v1',
 });
 
+type ChatReponse = {
+   id: string;
+   message: string;
+};
+
 export const chatService = {
    /**
     * Send a message to the chat service
@@ -16,7 +21,10 @@ export const chatService = {
     * @param prompt - The prompt to send to the chat service
     * @returns The response from the chat service
     */
-   sendMessage: async (conversationId: string, prompt: string) => {
+   sendMessage: async (
+      conversationId: string,
+      prompt: string
+   ): Promise<ChatReponse> => {
       try {
          const history = getLastConversation(conversationId) || [];
          const userMessage = { role: 'user' as const, content: prompt };
@@ -37,7 +45,10 @@ export const chatService = {
             content: assistantContent,
          };
          setLastConversation(conversationId, [...messages, assistantMessage]);
-         return assistantContent;
+         return {
+            id: conversationId,
+            message: assistantContent,
+         };
       } catch (error) {
          console.error('Error in chat service:', error);
          throw error;

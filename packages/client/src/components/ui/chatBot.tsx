@@ -19,13 +19,13 @@ type Message = {
 const ChatBot = () => {
    const [messages, setMessages] = useState<Message[]>([]);
    const [isBotThinking, setIsBotThinking] = useState(false);
-   const formRef = useRef<HTMLFormElement>(null);
+   const lastMessageRef = useRef<HTMLDivElement>(null);
    const { register, handleSubmit, reset, formState } = useForm<FormData>();
    const conversationId = useRef<string>(crypto.randomUUID());
 
    // 自动滚动到最新消息
    useEffect(() => {
-      formRef?.current?.scrollIntoView({ behavior: 'smooth' });
+      lastMessageRef?.current?.scrollIntoView({ behavior: 'smooth' });
    });
 
    const onSubmit = async (formData: FormData) => {
@@ -63,10 +63,11 @@ const ChatBot = () => {
    };
 
    return (
-      <div>
-         <div className="flex flex-col gap-3 mb-10">
+      <div className="flex flex-col  h-full">
+         <div className="flex flex-col flex-1 gap-3 mb-10 overflow-y-auto">
             {messages.map((message, index) => (
                <div
+                  ref={index === messages.length - 1 ? lastMessageRef : null}
                   onCopy={onCopyMessage}
                   key={index}
                   className={`px-3 py-1 rounded-xl ${message.role === 'user' ? 'bg-blue-600 text-white self-end' : 'bg-gray-100 text-black self-start'}`}
@@ -84,7 +85,6 @@ const ChatBot = () => {
          </div>
 
          <form
-            ref={formRef}
             className="flex flex-col gap-2 items-end border-2 p-4 rounded-3xl"
             onSubmit={handleSubmit(onSubmit)}
             onKeyDown={onKeyDown}

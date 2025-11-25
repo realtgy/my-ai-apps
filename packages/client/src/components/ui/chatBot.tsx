@@ -4,6 +4,7 @@ import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { useRef } from 'react';
 import { useState } from 'react';
+import ReactMarkdown from 'react-markdown';
 
 type FormData = {
    prompt: string;
@@ -48,12 +49,12 @@ const ChatBot = () => {
       <div>
          <div className="flex flex-col gap-3 mb-10">
             {messages.map((message, index) => (
-               <p
+               <div
                   key={index}
                   className={`px-3 py-1 rounded-xl ${message.role === 'user' ? 'bg-blue-600 text-white self-end' : 'bg-gray-100 text-black self-start'}`}
                >
-                  {message.content}
-               </p>
+                  <ReactMarkdown>{message.content}</ReactMarkdown>
+               </div>
             ))}
          </div>
          <form

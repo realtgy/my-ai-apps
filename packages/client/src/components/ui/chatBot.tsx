@@ -47,10 +47,18 @@ const ChatBot = () => {
       reset();
    };
 
-   const onKeyDown = (e: React.KeyboardEvent<HTMLFormElement>) => {
+   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
       if (e.key === 'Enter' && !e.shiftKey) {
          e.preventDefault();
          handleSubmit(onSubmit)();
+      }
+   };
+
+   const onCopyMessage = (e: React.ClipboardEvent<HTMLDivElement>) => {
+      const selection = window.getSelection()?.toString()?.trim();
+      if (selection) {
+         e.preventDefault();
+         e.clipboardData.setData('text/plain', selection);
       }
    };
 
@@ -59,6 +67,7 @@ const ChatBot = () => {
          <div className="flex flex-col gap-3 mb-10">
             {messages.map((message, index) => (
                <div
+                  onCopy={onCopyMessage}
                   key={index}
                   className={`px-3 py-1 rounded-xl ${message.role === 'user' ? 'bg-blue-600 text-white self-end' : 'bg-gray-100 text-black self-start'}`}
                >

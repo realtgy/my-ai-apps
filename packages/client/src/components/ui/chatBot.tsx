@@ -1,25 +1,24 @@
 import { Button } from './button';
 import { FaArrowUp } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
+import axios from 'axios';
+import { useRef } from 'react';
 
 type FormData = {
    prompt: string;
+   conversationId: string;
 };
 
 const ChatBot = () => {
    const { register, handleSubmit, reset, formState } = useForm<FormData>();
-
+   const conversationId = useRef<string>(crypto.randomUUID());
    const onSubmit = async (formData: FormData) => {
       try {
-         const response = await fetch('/api/chat', {
-            method: 'POST',
-            headers: {
-               'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(formData),
+         const response = await axios.post('/api/chat', {
+            ...formData,
+            conversationId: conversationId.current,
          });
-         const resp = await response.json();
-         console.log('chatbox ==>', resp);
+         console.log('chatbox ==>', response.data);
          reset();
       } catch (error) {
          console.error(error);

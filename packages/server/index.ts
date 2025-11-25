@@ -45,7 +45,7 @@ app.post('/api/chat', async (req: Request, res: Response) => {
       const userMessage = { role: 'user' as const, content: prompt };
       const messages = [...history, userMessage];
       const chat = await client.chat.completions.create({
-         model: 'gpt-5-mini121231233123',
+         model: 'gpt-5-mini',
          temperature: 0.2,
          max_completion_tokens: 200,
          messages: messages.map((msg) => ({

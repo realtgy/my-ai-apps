@@ -34,6 +34,7 @@ const ChatBot = () => {
          ...prev,
          { role: 'user', content: formData.prompt },
       ]);
+      reset({ prompt: '', conversationId: conversationId.current });
       const response = await axios.post('/api/chat', {
          ...formData,
          conversationId: conversationId.current,
@@ -44,7 +45,6 @@ const ChatBot = () => {
       };
       setMessages((prev) => [...prev, newMessage]);
       setIsBotThinking(false);
-      reset();
    };
 
    const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {

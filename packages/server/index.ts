@@ -1,25 +1,14 @@
 import express from 'express';
 import type { Request, Response } from 'express';
 import dotenv from 'dotenv';
-import { chatController } from './controllers/chat.controller';
+import router from './routes';
 
 dotenv.config();
 const app = express();
 const port = process.env.PORT || 3000;
 
 app.use(express.json());
-
-app.post('/api/chat', chatController.sendMessage);
-
-app.get('/api/hello', (req: Request, res: Response) => {
-   res.json({
-      message: 'Hello world!',
-   });
-});
-
-app.get('/', (req: Request, res: Response) => {
-   res.send(`OPENAI_AI_KEY:${process.env.OPENAI_API_KEY}`);
-});
+app.use(router);
 
 app.listen(port, () => {
    console.log(`http://localhost:${port}`);

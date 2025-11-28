@@ -17,6 +17,7 @@ type Message = {
 };
 
 const ChatBot = () => {
+   const [error, setError] = useState('');
    const [messages, setMessages] = useState<Message[]>([]);
    const [isBotThinking, setIsBotThinking] = useState(false);
    const lastMessageRef = useRef<HTMLDivElement>(null);
@@ -29,22 +30,30 @@ const ChatBot = () => {
    });
 
    const onSubmit = async (formData: FormData) => {
-      setIsBotThinking(true);
-      setMessages((prev) => [
-         ...prev,
-         { role: 'user', content: formData.prompt },
-      ]);
-      reset({ prompt: '', conversationId: conversationId.current });
-      const response = await axios.post('/api/chat', {
-         ...formData,
-         conversationId: conversationId.current,
-      });
-      const newMessage = {
-         role: 'assistant' as const,
-         content: response.data.message as string,
-      };
-      setMessages((prev) => [...prev, newMessage]);
-      setIsBotThinking(false);
+      try {
+         setError('');
+         setIsBotThinking(true);
+         setMessages((prev) => [
+            ...prev,
+            { role: 'user', content: formData.prompt },
+         ]);
+         reset({ prompt: '', conversationId: conversationId.current });
+         const response = await axios.post('/api/chat', {
+            ...formData,
+            conversationId: conversationId.current,
+         });
+         const newMessage = {
+            role: 'assistant' as const,
+            content: response.data.message as string,
+         };
+         setMessages((prev) => [...prev, newMessage]);
+         setIsBotThinking(false);
+      } catch (err) {
+         console.log(err);
+         setError('Something went wrong. Try again later.');
+      } finally {
+         setIsBotThinking(false);
+      }
    };
 
    const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
@@ -82,6 +91,7 @@ const ChatBot = () => {
                   <div className="w-2 h-2 bg-gray-800 rounded-full animate-pulse [animation-delay:0.4s]" />
                </div>
             )}
+            {error && <div className="text-red-500 text-sm">{error}</div>}
          </div>
 
          <form

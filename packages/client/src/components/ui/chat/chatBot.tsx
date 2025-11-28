@@ -6,6 +6,14 @@ import ChatMessages from './ChatMessages';
 import type { Message } from './ChatMessages';
 import ChatInput from './ChatInput';
 import type { ChatInputFormData } from './ChatInput';
+import popSound from '@/assets/sounds/pop.mp3';
+import notificationSound from '@/assets/sounds/notification.mp3';
+
+const popAudio = new Audio(popSound);
+popAudio.volume = 0.2;
+
+const notificationAudio = new Audio(notificationSound);
+notificationAudio.volume = 0.2;
 
 const ChatBot = () => {
    const [error, setError] = useState('');
@@ -21,7 +29,7 @@ const ChatBot = () => {
             ...prev,
             { role: 'user', content: formData.prompt },
          ]);
-
+         popAudio.play();
          const response = await axios.post('/api/chat', {
             ...formData,
             conversationId: conversationId.current,
@@ -30,6 +38,7 @@ const ChatBot = () => {
             role: 'assistant' as const,
             content: response.data.message as string,
          };
+         notificationAudio.play();
          setMessages((prev) => [...prev, newMessage]);
          setIsBotThinking(false);
       } catch (err) {

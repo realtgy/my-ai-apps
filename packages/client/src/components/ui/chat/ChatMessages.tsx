@@ -8,7 +8,6 @@ export type Message = {
 
 type ChatMessageProps = {
    messages: Message[];
-   lastMessageRef: React.RefObject<HTMLDivElement>;
 };
 export default function ChatMessages({ messages }: ChatMessageProps) {
    const lastMessageRef = useRef<HTMLDivElement>(null);

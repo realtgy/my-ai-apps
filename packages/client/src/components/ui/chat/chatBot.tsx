@@ -1,26 +1,19 @@
-import { Button } from '../button';
-import { FaArrowUp } from 'react-icons/fa';
-import { useForm } from 'react-hook-form';
 import axios from 'axios';
 import { useRef } from 'react';
 import { useState } from 'react';
 import TypingIndicator from './TypeingIndicator';
 import ChatMessages from './ChatMessages';
 import type { Message } from './ChatMessages';
-
-type FormData = {
-   prompt: string;
-   conversationId: string;
-};
+import ChatInput from './ChatInput';
+import type { ChatInputFormData } from './ChatInput';
 
 const ChatBot = () => {
    const [error, setError] = useState('');
    const [messages, setMessages] = useState<Message[]>([]);
    const [isBotThinking, setIsBotThinking] = useState(false);
-   const { register, handleSubmit, reset, formState } = useForm<FormData>();
    const conversationId = useRef<string>(crypto.randomUUID());
 
-   const onSubmit = async (formData: FormData) => {
+   const onSubmit = async (formData: ChatInputFormData) => {
       try {
          setError('');
          setIsBotThinking(true);
@@ -28,7 +21,7 @@ const ChatBot = () => {
             ...prev,
             { role: 'user', content: formData.prompt },
          ]);
-         reset({ prompt: '', conversationId: conversationId.current });
+
          const response = await axios.post('/api/chat', {
             ...formData,
             conversationId: conversationId.current,
@@ -47,13 +40,6 @@ const ChatBot = () => {
       }
    };
 
-   const onKeyDown = (e: React.KeyboardEvent<HTMLDivElement>) => {
-      if (e.key === 'Enter' && !e.shiftKey) {
-         e.preventDefault();
-         handleSubmit(onSubmit)();
-      }
-   };
-
    return (
       <div className="flex flex-col  h-full">
          <div className="flex flex-col flex-1 gap-3 mb-10 overflow-y-auto">
@@ -62,26 +48,7 @@ const ChatBot = () => {
             {error && <div className="text-red-500 text-sm">{error}</div>}
          </div>
 
-         <form
-            className="flex flex-col gap-2 items-end border-2 p-4 rounded-3xl"
-            onSubmit={handleSubmit(onSubmit)}
-            onKeyDown={onKeyDown}
-         >
-            <textarea
-               {...register('prompt', {
-                  required: true,
-                  validate: (value) => value.trim().length > 0,
-               })}
-               className="w-full border-0 focus:outline-0 resize-none"
-               placeholder="ask anything..."
-            />
-            <Button
-               className="w-9 h-9 rounded-full"
-               disabled={!formState.isValid || formState.isSubmitting}
-            >
-               <FaArrowUp />
-            </Button>
-         </form>
+         <ChatInput onSubmit={onSubmit} />
       </div>
    );
 };

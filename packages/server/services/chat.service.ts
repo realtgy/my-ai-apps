@@ -3,6 +3,19 @@ import {
    getLastConversation,
    setLastConversation,
 } from '../repositories/conversation.repositories';
+import fs from 'fs';
+import path from 'path';
+import chatbotPrompt from '../prompts/chatbot.txt';
+
+const partInfo = fs.readFileSync(
+   path.join(__dirname, '../prompts/Hong-Kong-Disneyland.md'),
+   'utf8'
+);
+
+const chatbotPromptContent = (chatbotPrompt as string).replace(
+   '{{partInfo}}',
+   partInfo
+);
 
 const client = new OpenAI({
    apiKey: process.env.POE_API_KEY,
@@ -28,15 +41,24 @@ export const chatService = {
       try {
          const history = getLastConversation(conversationId) || [];
          const userMessage = { role: 'user' as const, content: prompt };
-         const messages = [...history, userMessage];
+
+         // 构建发送给 API 的消息数组：在开头添加系统提示词
+         const messagesForAPI = [
+            { role: 'system' as const, content: chatbotPromptContent },
+            ...history,
+            userMessage,
+         ];
+
+         const finalMessages = messagesForAPI.map((msg) => ({
+            role: msg.role,
+            content: msg.content,
+         }));
+
          const chat = await client.chat.completions.create({
             model: 'gpt-5-mini',
             temperature: 0.2,
             max_completion_tokens: 200,
-            messages: messages.map((msg) => ({
-               role: msg.role,
-               content: msg.content,
-            })),
+            messages: finalMessages,
          });
 
          const assistantContent = chat?.choices[0]?.message?.content || '';
@@ -44,7 +66,12 @@ export const chatService = {
             role: 'assistant' as const,
             content: assistantContent,
          };
-         setLastConversation(conversationId, [...messages, assistantMessage]);
+         // 保存对话历史（不包含系统消息，因为类型定义不支持）
+         setLastConversation(conversationId, [
+            ...history,
+            userMessage,
+            assistantMessage,
+         ]);
          return {
             id: conversationId,
             message: assistantContent,

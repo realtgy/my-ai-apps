@@ -2,33 +2,23 @@ import { Button } from '../button';
 import { FaArrowUp } from 'react-icons/fa';
 import { useForm } from 'react-hook-form';
 import axios from 'axios';
-import { useRef, useEffect } from 'react';
+import { useRef } from 'react';
 import { useState } from 'react';
-import ReactMarkdown from 'react-markdown';
 import TypingIndicator from './TypeingIndicator';
+import ChatMessages from './ChatMessages';
+import type { Message } from './ChatMessages';
 
 type FormData = {
    prompt: string;
    conversationId: string;
 };
 
-type Message = {
-   role: 'user' | 'assistant';
-   content: string;
-};
-
 const ChatBot = () => {
    const [error, setError] = useState('');
    const [messages, setMessages] = useState<Message[]>([]);
    const [isBotThinking, setIsBotThinking] = useState(false);
-   const lastMessageRef = useRef<HTMLDivElement>(null);
    const { register, handleSubmit, reset, formState } = useForm<FormData>();
    const conversationId = useRef<string>(crypto.randomUUID());
-
-   // 自动滚动到最新消息
-   useEffect(() => {
-      lastMessageRef?.current?.scrollIntoView({ behavior: 'smooth' });
-   });
 
    const onSubmit = async (formData: FormData) => {
       try {
@@ -64,27 +54,10 @@ const ChatBot = () => {
       }
    };
 
-   const onCopyMessage = (e: React.ClipboardEvent<HTMLDivElement>) => {
-      const selection = window.getSelection()?.toString()?.trim();
-      if (selection) {
-         e.preventDefault();
-         e.clipboardData.setData('text/plain', selection);
-      }
-   };
-
    return (
       <div className="flex flex-col  h-full">
          <div className="flex flex-col flex-1 gap-3 mb-10 overflow-y-auto">
-            {messages.map((message, index) => (
-               <div
-                  ref={index === messages.length - 1 ? lastMessageRef : null}
-                  onCopy={onCopyMessage}
-                  key={index}
-                  className={`px-3 py-1 rounded-xl ${message.role === 'user' ? 'bg-blue-600 text-white self-end' : 'bg-gray-100 text-black self-start'}`}
-               >
-                  <ReactMarkdown>{message.content}</ReactMarkdown>
-               </div>
-            ))}
+            <ChatMessages messages={messages} />
             {isBotThinking && <TypingIndicator />}
             {error && <div className="text-red-500 text-sm">{error}</div>}
          </div>

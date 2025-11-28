@@ -9,12 +9,14 @@
    },
    "devDependencies": {
       "@types/bun": "latest",
-      "@types/express": "^5.0.5"
+      "@types/express": "^5.0.5",
+      "prisma": "^7.0.1"
    },
    "peerDependencies": {
       "typescript": "^5"
    },
    "dependencies": {
+      "@prisma/client": "^7.0.1",
       "dotenv": "^17.2.3",
       "express": "^5.1.0",
       "openai": "^6.9.1",

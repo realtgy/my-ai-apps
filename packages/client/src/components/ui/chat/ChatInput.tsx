@@ -19,6 +19,7 @@ const ChatInput = ({ onSubmit }: ChatInputProps) => {
       if (e.key === 'Enter' && !e.shiftKey) {
          e.preventDefault();
          handleSubmit(onSubmit)();
+         reset({ prompt: '' });
       }
    };
    const handleFormSubmit = handleSubmit((data) => {

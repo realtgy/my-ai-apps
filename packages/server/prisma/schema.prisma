@@ -9,31 +9,37 @@ datasource db {
 
 model Product {
   id          String   @id @default(uuid())
-  name        String
-  description String?
-  price       Float
+  name        String   @db.VarChar(255)
+  description String?  @db.Text
+  price       Decimal  @db.Decimal(10, 2)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
   reviews     Review[]
   sumarries   Sumarry?
+
+  @@map("products")
 }
 
 model Review {
   id        String   @id @default(uuid())
-  author    String
-  rating    Int
-  content   String
+  author    String   @db.VarChar(255)
+  rating    Int      @db.TinyInt
+  content   String   @db.Text
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   productId String
   product   Product  @relation(fields: [productId], references: [id])
+
+  @@map("reviews")
 }
 
 model Sumarry {
   id          String   @id @default(uuid())
-  content     String
+  content     String   @db.Text
   productId   String   @unique
   product     Product  @relation(fields: [productId], references: [id])
   generatedAt DateTime @default(now())
   expiresAt   DateTime
+
+  @@map("summaries")
 }

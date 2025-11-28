@@ -32,7 +32,7 @@ export default function ChatMessages({ messages }: ChatMessageProps) {
                ref={index === messages.length - 1 ? lastMessageRef : null}
                onCopy={onCopyMessage}
                key={index}
-               className={`px-3 py-1 rounded-xl ${message.role === 'user' ? 'bg-blue-600 text-white self-end' : 'bg-gray-100 text-black self-start'}`}
+               className={`px-3 py-1 max-w-md rounded-xl ${message.role === 'user' ? 'bg-blue-600 text-white self-end' : 'bg-gray-100 text-black self-start'}`}
             >
                <ReactMarkdown>{message.content}</ReactMarkdown>
             </div>

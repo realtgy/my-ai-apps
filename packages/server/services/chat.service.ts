@@ -44,7 +44,7 @@ export const chatService = {
 
          // 构建发送给 API 的消息数组：在开头添加系统提示词
          const messagesForAPI = [
-            { role: 'system' as const, content: chatbotPromptContent },
+            { role: 'user' as const, content: chatbotPromptContent },
             ...history,
             userMessage,
          ];

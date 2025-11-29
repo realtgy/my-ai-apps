@@ -9,6 +9,10 @@ export const reviewController = {
       if (!id) {
          return res.status(400).json({ error: 'Product ID is required' });
       }
+      const product = await productRepositories.getProduct(id as string);
+      if (!product) {
+         return res.status(500).json({ error: 'Invalid product ID' });
+      }
       const reviews = await reviewRepositories.getReviews(id as string);
       const summary = await reviewRepositories.getReviewSummary(id as string);
       res.json({ reviews, summary });

@@ -2,6 +2,7 @@ import axios from 'axios';
 import StarRating from './StarRating';
 import Skeleton from 'react-loading-skeleton';
 import { useQuery } from '@tanstack/react-query';
+import { Button } from '../ui/button';
 
 type ReviwListProps = {
    productId: string;
@@ -31,6 +32,7 @@ const ReviewList = ({ productId }: ReviwListProps) => {
       data: reviewData,
       isLoading,
       error,
+      refetch,
    } = useQuery({
       queryKey: ['reviews', productId],
       queryFn: () => fetchReviews(),
@@ -53,7 +55,10 @@ const ReviewList = ({ productId }: ReviwListProps) => {
    if (error) {
       return (
          <div className="flex flex-col gap-5">
-            <div className="text-red-500">{error.message}</div>
+            <div className="text-red-500">
+               Could not load reviews. Try again later.
+            </div>
+            <Button onClick={() => refetch()}>Try again</Button>
          </div>
       );
    }

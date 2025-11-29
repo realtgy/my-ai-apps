@@ -1,11 +1,6 @@
 import type { Review } from '@prisma/client';
 import { reviewRepositories } from '../repositories/review.repositories';
-import { OpenAI } from 'openai';
-
-const client = new OpenAI({
-   apiKey: process.env.POE_API_KEY,
-   baseURL: 'https://api.poe.com/v1',
-});
+import { llmClient } from '../llm/client';
 
 export const reviewService = {
    getReviews: async (productId: string): Promise<Review[]> => {
@@ -23,13 +18,7 @@ export const reviewService = {
       const prompt = `Summarize the following reviews for a given reviews: ${reviewContent}.
       Highlight the key theme, both positive and negative.
       `;
-      const chat = await client.chat.completions.create({
-         model: 'gpt-5-mini',
-         messages: [{ role: 'user', content: prompt }],
-         temperature: 0.2,
-         max_completion_tokens: 500,
-      });
-      const summary = chat?.choices[0]?.message?.content || '';
+      const summary = await llmClient.generateText({ prompt });
       return summary;
    },
 };

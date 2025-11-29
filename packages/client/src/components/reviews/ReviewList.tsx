@@ -93,14 +93,15 @@ const ReviewList = ({ productId }: ReviwListProps) => {
                <p>{currentSummary}</p>
             ) : (
                <div>
-                  {isSummarizing ? (
-                     <ReviewSkeleton />
-                  ) : (
-                     <Button onClick={() => handleGenerateSummary()}>
-                        <IoSparklesSharp />
-                        Generate summary
-                     </Button>
-                  )}
+                  <Button
+                     onClick={() => handleGenerateSummary()}
+                     className="cursor-pointer"
+                     disabled={isSummarizing}
+                  >
+                     <IoSparklesSharp />
+                     Generate summary
+                  </Button>
+                  {isSummarizing ? <ReviewSkeleton /> : null}
                </div>
             )}
          </div>

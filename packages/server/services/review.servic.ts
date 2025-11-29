@@ -19,12 +19,12 @@ export const reviewService = {
 
       const reviews = await reviewRepositories.getReviews(productId, 10);
       const reviewContent = reviews.map((r) => r.content).join('\n');
-      const prompt = summarizeReviewsPrompt.replace(
-         '{{reviews}}',
-         reviewContent
-      );
+      // const prompt = summarizeReviewsPrompt.replace(
+      //    '{{reviews}}',
+      //    reviewContent
+      // );
       // const summary = await llmClient.generateText({ prompt });
-      const summary = await llmClient.summarizeText(prompt);
+      const summary = await llmClient.summarizeText(reviewContent);
       await reviewRepositories.storeeReviewSummary(productId, summary);
       return summary;
    },

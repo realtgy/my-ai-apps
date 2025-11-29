@@ -54,6 +54,7 @@
     "packages/server": {
       "name": "server",
       "dependencies": {
+        "@huggingface/inference": "^4.13.4",
         "@prisma/client": "5.22.0",
         "dayjs": "^1.11.19",
         "dotenv": "^17.2.3",
@@ -179,6 +180,12 @@
     "@eslint/object-schema": ["@eslint/object-schema@2.1.7", "https://mirrors.tencent.com/npm/@eslint/object-schema/-/object-schema-2.1.7.tgz", {}, "sha512-VtAOaymWVfZcmZbp6E2mympDIHvyjXs/12LqWYjVw6qjrfF+VK+fyG33kChz3nnK+SU5/NeHOqrTEHS8sXO3OA=="],
 
     "@eslint/plugin-kit": ["@eslint/plugin-kit@0.4.1", "https://mirrors.tencent.com/npm/@eslint/plugin-kit/-/plugin-kit-0.4.1.tgz", { "dependencies": { "@eslint/core": "^0.17.0", "levn": "^0.4.1" } }, "sha512-43/qtrDUokr7LJqoF2c3+RInu/t4zfrpYdoSDfYyhg52rwLV6TnOvdG4fXm7IkSB3wErkcmJS9iEhjVtOSEjjA=="],
+
+    "@huggingface/inference": ["@huggingface/inference@4.13.4", "https://mirrors.tencent.com/npm/@huggingface/inference/-/inference-4.13.4.tgz", { "dependencies": { "@huggingface/jinja": "^0.5.1", "@huggingface/tasks": "^0.19.65" } }, "sha512-1G6jBDYLAZw7oNrJdMp+0/CafeoNaCLzrDd9fYSX3nhjzMuyWIPZ/MtP5EwXdC0htlFPx+R6JGqPhctAalQO+w=="],
+
+    "@huggingface/jinja": ["@huggingface/jinja@0.5.3", "https://mirrors.tencent.com/npm/@huggingface/jinja/-/jinja-0.5.3.tgz", {}, "sha512-asqfZ4GQS0hD876Uw4qiUb7Tr/V5Q+JZuo2L+BtdrD4U40QU58nIRq3ZSgAzJgT874VLjhGVacaYfrdpXtEvtA=="],
+
+    "@huggingface/tasks": ["@huggingface/tasks@0.19.65", "https://mirrors.tencent.com/npm/@huggingface/tasks/-/tasks-0.19.65.tgz", {}, "sha512-ecP5bMLwZRKsln6IhTkicIt8Wzn7cYquKYBkJe7K2qkIvvnhzT32wf9dvvFjRqv+cDzdVxOLEdT0DUkVzGiV5A=="],
 
     "@humanfs/core": ["@humanfs/core@0.19.1", "https://mirrors.tencent.com/npm/@humanfs/core/-/core-0.19.1.tgz", {}, "sha512-5DyQ4+1JEUzejeK1JGICcideyfUbGixgS9jNgex5nqkW+cY7WZhxBigmieN5Qnw9ZosSNVC9KQKyb+GUaGyKUA=="],
 

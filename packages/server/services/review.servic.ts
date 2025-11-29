@@ -23,7 +23,8 @@ export const reviewService = {
          '{{reviews}}',
          reviewContent
       );
-      const summary = await llmClient.generateText({ prompt });
+      // const summary = await llmClient.generateText({ prompt });
+      const summary = await llmClient.summarizeText(prompt);
       await reviewRepositories.storeeReviewSummary(productId, summary);
       return summary;
    },

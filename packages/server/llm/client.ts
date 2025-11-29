@@ -34,4 +34,20 @@ export const llmClient = {
       });
       return output.summary_text || '';
    },
+   generateSummaryFormReviews: async (prompt: string, systemPrompt: string) => {
+      const chatCompletion = await inferenceClient.chatCompletion({
+         model: 'meta-llama/Llama-3.1-8B-Instruct:novita',
+         messages: [
+            {
+               role: 'system',
+               content: systemPrompt,
+            },
+            {
+               role: 'user',
+               content: prompt,
+            },
+         ],
+      });
+      return chatCompletion?.choices[0]?.message?.content || '';
+   },
 };

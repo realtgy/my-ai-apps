@@ -1,6 +1,6 @@
 import { reviewRepositories } from '../repositories/review.repositories';
 import { llmClient } from '../llm/client';
-import summarizeReviewsPrompt from '../prompts/sumarize-reviews.txt';
+import summarizeReviewsPrompt from '../llm/prompts/sumarize-reviews.txt';
 
 export const reviewService = {
    /**
@@ -24,7 +24,10 @@ export const reviewService = {
       //    reviewContent
       // );
       // const summary = await llmClient.generateText({ prompt });
-      const summary = await llmClient.summarizeText(reviewContent);
+      const summary = await llmClient.generateSummaryFormReviews(
+         reviewContent,
+         summarizeReviewsPrompt
+      );
       await reviewRepositories.storeeReviewSummary(productId, summary);
       return summary;
    },

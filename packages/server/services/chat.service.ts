@@ -5,10 +5,10 @@ import {
 } from '../repositories/conversation.repositories';
 import fs from 'fs';
 import path from 'path';
-import chatbotPrompt from '../prompts/chatbot.txt';
+import chatbotPrompt from '../llm/prompts/chatbot.txt';
 
 const partInfo = fs.readFileSync(
-   path.join(__dirname, '../prompts/Hong-Kong-Disneyland.md'),
+   path.join(__dirname, '../llm/prompts/Hong-Kong-Disneyland.md'),
    'utf8'
 );
 

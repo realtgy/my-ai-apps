@@ -66,6 +66,7 @@ chat.controller.ts
 ### 1. Controller 层（控制器层）
 
 **职责：**
+
 - ✅ 接收和处理 HTTP 请求
 - ✅ 参数验证（使用 Zod schema）
 - ✅ 调用 Service 层处理业务逻辑
@@ -83,15 +84,15 @@ export const reviewController = {
       if (!id) {
          return res.status(400).json({ error: 'Product ID is required' });
       }
-      
+
       // 2. 调用 Repository（简单查询）或 Service（复杂业务）
       const reviews = await reviewRepositories.getReviews(id);
       const summary = await reviewRepositories.getReviewSummary(id);
-      
+
       // 3. 返回响应
       res.json({ reviews, summary });
    },
-   
+
    summarizeReviews: async (req: Request, res: Response) => {
       // 复杂业务逻辑通过 Service 层处理
       const summary = await reviewService.summarizeReviews(id);
@@ -101,6 +102,7 @@ export const reviewController = {
 ```
 
 **特点：**
+
 - Controller 可以**直接调用 Repository**（用于简单查询）
 - Controller 应该**优先调用 Service**（用于复杂业务逻辑）
 - 当前实现中，`reviewController` 同时使用了两种方式，这是可以接受的
@@ -108,6 +110,7 @@ export const reviewController = {
 ### 2. Service 层（业务逻辑层）
 
 **职责：**
+
 - ✅ 实现核心业务逻辑
 - ✅ 协调多个 Repository 的操作
 - ✅ 调用外部服务（如 LLM API）
@@ -121,30 +124,35 @@ export const reviewController = {
 export const reviewService = {
    summarizeReviews: async (productId: string): Promise<string> => {
       // 1. 检查缓存（通过 Repository）
-      const existingSummary = await reviewRepositories.getReviewSummary(productId);
+      const existingSummary =
+         await reviewRepositories.getReviewSummary(productId);
       if (existingSummary) {
          return existingSummary; // 缓存命中
       }
 
       // 2. 获取数据（通过 Repository）
       const reviews = await reviewRepositories.getReviews(productId, 10);
-      
+
       // 3. 数据处理和转换
       const reviewContent = reviews.map((r) => r.content).join('\n');
-      const prompt = summarizeReviewsPrompt.replace('{{reviews}}', reviewContent);
-      
+      const prompt = summarizeReviewsPrompt.replace(
+         '{{reviews}}',
+         reviewContent
+      );
+
       // 4. 调用外部服务（LLM）
       const summary = await llmClient.generateText({ prompt });
-      
+
       // 5. 保存结果（通过 Repository）
       await reviewRepositories.storeeReviewSummary(productId, summary);
-      
+
       return summary;
    },
 };
 ```
 
 **特点：**
+
 - Service 层**不直接处理 HTTP 请求/响应**
 - Service 层可以**调用多个 Repository**
 - Service 层可以**调用外部服务**（如 LLM、第三方 API）
@@ -152,6 +160,7 @@ export const reviewService = {
 ### 3. Repository 层（数据访问层）
 
 **职责：**
+
 - ✅ 封装数据库操作
 - ✅ 提供统一的数据访问接口
 - ✅ 隐藏数据库实现细节（Prisma）
@@ -170,7 +179,7 @@ export const reviewRepositories = {
          take: limit,
       });
    },
-   
+
    storeeReviewSummary: async (productId: string, summary: string) => {
       // 封装数据库写入操作
       await prisma.sumarry.upsert({
@@ -183,6 +192,7 @@ export const reviewRepositories = {
 ```
 
 **特点：**
+
 - Repository 层**只负责数据访问**，不包含业务逻辑
 - 如果将来需要更换数据库（如从 PostgreSQL 到 MongoDB），只需修改 Repository 层
 - 提供**可测试性**：可以轻松创建 Mock Repository
@@ -190,16 +200,19 @@ export const reviewRepositories = {
 ## 🎯 设计模式与原则
 
 ### 1. 单一职责原则（SRP）
+
 - **Controller**：只负责 HTTP 请求处理
 - **Service**：只负责业务逻辑
 - **Repository**：只负责数据访问
 
 ### 2. 依赖倒置原则（DIP）
+
 - 上层（Controller）依赖下层（Service）
 - Service 依赖 Repository 的**接口**，而不是具体实现
 - 虽然当前代码直接依赖了具体实现，但可以通过接口进一步抽象
 
 ### 3. 关注点分离（SoC）
+
 - 每一层都有明确的职责边界
 - 修改业务逻辑不影响 Controller
 - 修改数据库不影响 Service
@@ -236,6 +249,7 @@ Controller (review.controller.ts / chat.controller.ts)
 ## ⚠️ 当前实现中的注意事项
 
 ### 1. Controller 直接调用 Repository
+
 在 `review.controller.ts` 中，Controller 既调用了 Service，也直接调用了 Repository：
 
 ```typescript
@@ -248,14 +262,17 @@ const summary = await reviewService.summarizeReviews(id);
 ```
 
 **建议：**
+
 - 对于**简单查询**，直接调用 Repository 是可以接受的
 - 对于**复杂业务逻辑**，应该通过 Service 层
 - 保持一致性：如果项目较大，建议所有数据访问都通过 Service 层
 
 ### 2. 命名不一致
+
 - `review.servic.ts` 应该是 `review.service.ts`（拼写错误）
 
 ### 3. 缺少接口抽象
+
 当前 Repository 和 Service 都是具体实现，没有接口定义。如果需要更好的可测试性和灵活性，可以引入接口：
 
 ```typescript
@@ -326,8 +343,8 @@ export const reviewRepositories: IReviewRepository = { ... };
 - ✅ **易于维护和扩展**
 
 这种架构模式特别适合：
+
 - 中大型项目
 - 需要长期维护的项目
 - 需要团队协作的项目
 - 需要高可测试性的项目
-

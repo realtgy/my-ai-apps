@@ -21,6 +21,7 @@ export const reviewService = {
          reviewContent
       );
       const summary = await llmClient.generateText({ prompt });
+      await reviewRepositories.storeeReviewSummary(productId, summary);
       return summary;
    },
 };

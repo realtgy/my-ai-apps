@@ -1,39 +1,15 @@
-import axios from 'axios';
 import StarRating from './StarRating';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { Button } from '../ui/button';
 import { IoSparklesSharp } from 'react-icons/io5';
-import { useState } from 'react';
 import ReviewSkeleton from './ReviewSkeleton';
+import { reviewsApi, type SummarizeResponse } from './reviewsApi';
 
 type ReviwListProps = {
    productId: string;
 };
 
-type Review = {
-   id: string;
-   author: string;
-   content: string;
-   rating: number;
-   createdAt: string;
-};
-
-type GetReviewsResponse = {
-   summary: string | null;
-   reviews: Review[];
-};
-
-type SummarizeResponse = {
-   summary: string;
-};
-
 const ReviewList = ({ productId }: ReviwListProps) => {
-   const fetchReviews = async () => {
-      const { data } = await axios.get<GetReviewsResponse>(
-         `/api/products/${productId}/reviews`
-      );
-      return data;
-   };
    const {
       data: reviewData,
       isLoading,
@@ -41,22 +17,16 @@ const ReviewList = ({ productId }: ReviwListProps) => {
       refetch,
    } = useQuery({
       queryKey: ['reviews', productId],
-      queryFn: () => fetchReviews(),
+      queryFn: () => reviewsApi.getReviews(productId),
    });
 
-   const summarizeReviews = async () => {
-      const { data } = await axios.post<SummarizeResponse>(
-         `/api/products/${productId}/reviews/summarize`
-      );
-      return data;
-   };
    const {
       mutate: handleSummarizeReviews,
       isPending: isSummarizing,
       error: summaryError,
       data: summarizeResponse,
    } = useMutation<SummarizeResponse>({
-      mutationFn: () => summarizeReviews(),
+      mutationFn: () => reviewsApi.summarizeReviews(productId),
    });
 
    if (isLoading) {

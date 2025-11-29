@@ -29,10 +29,15 @@ export const reviewRepositories = {
          create: data,
       });
    },
-   getReviewSummary: async (productId: string) => {
-      const summary = await prisma.sumarry.findUnique({
-         where: { productId },
+   /**
+    * query the valid summary for a given product ID
+    * @param productId - the ID of the product
+    * @returns the summary or null if no valid summary is found
+    */
+   getReviewSummary: async (productId: string): Promise<string | null> => {
+      const summary = await prisma.sumarry.findFirst({
+         where: { AND: [{ productId }, { expiresAt: { gt: new Date() } }] },
       });
-      return summary;
+      return summary?.content ?? null;
    },
 };

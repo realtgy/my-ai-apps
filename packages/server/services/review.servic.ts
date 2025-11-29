@@ -1,30 +1,23 @@
 import { reviewRepositories } from '../repositories/review.repositories';
 import { llmClient } from '../llm/client';
 import summarizeReviewsPrompt from '../prompts/sumarize-reviews.txt';
-import dayjs from 'dayjs';
 
 export const reviewService = {
    /**
-    * Summarize the reviews for a given product ID
+    * Summarize the reviews for a given product ID, if the summary is not found,
+    * generate a new summary from the latest 10 reviews
+    * and store the summary in the database.
     * @param productId - The ID of the product
     * @returns The summary of the reviews
     */
    summarizeReviews: async (productId: string): Promise<string> => {
       const existingSummary =
          await reviewRepositories.getReviewSummary(productId);
-      if (
-         existingSummary &&
-         existingSummary.expiresAt &&
-         dayjs(existingSummary.expiresAt).isAfter(dayjs())
-      ) {
-         return existingSummary.content;
+      if (existingSummary) {
+         return existingSummary;
       }
 
       const reviews = await reviewRepositories.getReviews(productId, 10);
-      if (reviews.length === 0) {
-         return 'No reviews found for this product';
-      }
-
       const reviewContent = reviews.map((r) => r.content).join('\n');
       const prompt = summarizeReviewsPrompt.replace(
          '{{reviews}}',

@@ -1,10 +1,10 @@
 import axios from 'axios';
 import StarRating from './StarRating';
-import Skeleton from 'react-loading-skeleton';
 import { useQuery } from '@tanstack/react-query';
 import { Button } from '../ui/button';
 import { IoSparklesSharp } from 'react-icons/io5';
 import { useState } from 'react';
+import ReviewSkeleton from './ReviewSkeleton';
 
 type ReviwListProps = {
    productId: string;
@@ -45,11 +45,16 @@ const ReviewList = ({ productId }: ReviwListProps) => {
    });
 
    const [summary, setSummary] = useState<string>('');
+   const [isSummarizing, setIsSummarizing] = useState(false);
    const handleGenerateSummary = async () => {
+      setIsSummarizing(true);
+
       const { data } = await axios.post<SummarizeResponse>(
          `/api/products/${productId}/reviews/summarize`
       );
+
       setSummary(data.summary);
+      setIsSummarizing(false);
    };
 
    if (isLoading) {
@@ -57,9 +62,7 @@ const ReviewList = ({ productId }: ReviwListProps) => {
          <div className="flex flex-col gap-5">
             {[1, 2, 3].map((p) => (
                <div key={p}>
-                  <Skeleton width={150} />
-                  <Skeleton width={100} />
-                  <Skeleton count={2} />
+                  <ReviewSkeleton />
                </div>
             ))}
          </div>
@@ -89,10 +92,16 @@ const ReviewList = ({ productId }: ReviwListProps) => {
             {currentSummary ? (
                <p>{currentSummary}</p>
             ) : (
-               <Button onClick={() => handleGenerateSummary()}>
-                  <IoSparklesSharp />
-                  Generate summary
-               </Button>
+               <div>
+                  {isSummarizing ? (
+                     <ReviewSkeleton />
+                  ) : (
+                     <Button onClick={() => handleGenerateSummary()}>
+                        <IoSparklesSharp />
+                        Generate summary
+                     </Button>
+                  )}
+               </div>
             )}
          </div>
          <div className="flex flex-col gap-5">

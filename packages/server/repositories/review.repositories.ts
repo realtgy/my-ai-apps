@@ -29,4 +29,10 @@ export const reviewRepositories = {
          create: data,
       });
    },
+   getReviewSummary: async (productId: string) => {
+      const summary = await prisma.sumarry.findUnique({
+         where: { productId },
+      });
+      return summary;
+   },
 };

@@ -1,0 +1,4 @@
+Summarize the following reviews.
+Highlight the key theme, both positive and negative.
+Here are the reviews:
+{{reviews}}

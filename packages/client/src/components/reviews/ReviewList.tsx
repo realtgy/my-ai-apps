@@ -2,6 +2,7 @@ import axios from 'axios';
 import { useState, useEffect } from 'react';
 import StarRating from './StarRating';
 import Skeleton from 'react-loading-skeleton';
+import { useQuery } from '@tanstack/react-query';
 
 type ReviwListProps = {
    productId: string;
@@ -21,27 +22,20 @@ type GetReviewsResponse = {
 };
 
 const ReviewList = ({ productId }: ReviwListProps) => {
-   const [reviewData, setReviewData] = useState<GetReviewsResponse>();
-   const [isLoading, setIsLoading] = useState(true);
-   const [error, setError] = useState<string>('');
-   useEffect(() => {
-      const fetchReviews = async () => {
-         try {
-            setIsLoading(true);
-            const { data } = await axios.get<GetReviewsResponse>(
-               `/api/products/${productId}/reviewws`
-            );
-            setReviewData(data);
-         } catch (err) {
-            // TODO: log to sentry
-            console.error(err);
-            setError('Failed to fetch reviews');
-         } finally {
-            setIsLoading(false);
-         }
-      };
-      fetchReviews();
-   }, [productId]);
+   const fetchReviews = async () => {
+      const { data } = await axios.get<GetReviewsResponse>(
+         `/api/products/${productId}/reviews`
+      );
+      return data;
+   };
+   const {
+      data: reviewData,
+      isLoading,
+      error,
+   } = useQuery({
+      queryKey: ['reviews', productId],
+      queryFn: () => fetchReviews(),
+   });
 
    if (isLoading) {
       return (
@@ -60,14 +54,14 @@ const ReviewList = ({ productId }: ReviwListProps) => {
    if (error) {
       return (
          <div className="flex flex-col gap-5">
-            <div className="text-red-500">{error}</div>
+            <div className="text-red-500">{error.message}</div>
          </div>
       );
    }
 
    return (
       <div className="flex flex-col gap-5">
-         {reviewData?.reviews.map((review) => (
+         {reviewData?.reviews?.map((review) => (
             <div key={review.id}>
                <div className="font-semibold">{review.author}</div>
                <div>

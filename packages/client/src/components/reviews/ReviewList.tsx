@@ -23,15 +23,22 @@ type GetReviewsResponse = {
 const ReviewList = ({ productId }: ReviwListProps) => {
    const [reviewData, setReviewData] = useState<GetReviewsResponse>();
    const [isLoading, setIsLoading] = useState(true);
-
+   const [error, setError] = useState<string>('');
    useEffect(() => {
       const fetchReviews = async () => {
-         setIsLoading(true);
-         const { data } = await axios.get<GetReviewsResponse>(
-            `/api/products/${productId}/reviews`
-         );
-         setReviewData(data);
-         setIsLoading(false);
+         try {
+            setIsLoading(true);
+            const { data } = await axios.get<GetReviewsResponse>(
+               `/api/products/${productId}/reviewws`
+            );
+            setReviewData(data);
+         } catch (err) {
+            // TODO: log to sentry
+            console.error(err);
+            setError('Failed to fetch reviews');
+         } finally {
+            setIsLoading(false);
+         }
       };
       fetchReviews();
    }, [productId]);
@@ -46,6 +53,14 @@ const ReviewList = ({ productId }: ReviwListProps) => {
                   <Skeleton count={2} />
                </div>
             ))}
+         </div>
+      );
+   }
+
+   if (error) {
+      return (
+         <div className="flex flex-col gap-5">
+            <div className="text-red-500">{error}</div>
          </div>
       );
    }

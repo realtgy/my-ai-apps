@@ -46,15 +46,21 @@ const ReviewList = ({ productId }: ReviwListProps) => {
 
    const [summary, setSummary] = useState<string>('');
    const [isSummarizing, setIsSummarizing] = useState(false);
+   const [summaryError, setSummaryError] = useState<string>('');
    const handleGenerateSummary = async () => {
-      setIsSummarizing(true);
-
-      const { data } = await axios.post<SummarizeResponse>(
-         `/api/products/${productId}/reviews/summarize`
-      );
-
-      setSummary(data.summary);
-      setIsSummarizing(false);
+      try {
+         setIsSummarizing(true);
+         setSummaryError('');
+         const { data } = await axios.post<SummarizeResponse>(
+            `/api/products/${productId}/reviews/summarize`
+         );
+         setSummary(data.summary);
+      } catch (error) {
+         console.error(error);
+         setSummaryError('Failed to generate summary. Try again later.');
+      } finally {
+         setIsSummarizing(false);
+      }
    };
 
    if (isLoading) {
@@ -102,6 +108,9 @@ const ReviewList = ({ productId }: ReviwListProps) => {
                      Generate summary
                   </Button>
                   {isSummarizing ? <ReviewSkeleton /> : null}
+                  {summaryError ? (
+                     <div className="text-red-500">{summaryError}</div>
+                  ) : null}
                </div>
             )}
          </div>

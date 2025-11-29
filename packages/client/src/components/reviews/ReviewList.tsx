@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { useState, useEffect } from 'react';
 import StarRating from './StarRating';
 import Skeleton from 'react-loading-skeleton';
 import { useQuery } from '@tanstack/react-query';

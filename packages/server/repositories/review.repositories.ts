@@ -1,19 +1,17 @@
 import { PrismaClient, type Review } from '@prisma/client';
 
 export const reviewRepositories = {
-   getReviews: async (productId: string): Promise<Review[]> => {
+   getReviews: async (
+      productId: string,
+      limit: number = 10
+   ): Promise<Review[]> => {
       const prisma = new PrismaClient();
       const reviews = await prisma.review.findMany({
          where: { productId },
          orderBy: { createdAt: 'desc' },
+         take: limit,
       });
       return reviews;
    },
-   createReview: async (review: Review): Promise<Review> => {
-      const prisma = new PrismaClient();
-      const newReview = await prisma.review.create({
-         data: review,
-      });
-      return newReview;
-   },
+   // summarizeReviews: async (review: Review): Promise<Review> => {},
 };

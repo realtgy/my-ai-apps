@@ -9,7 +9,7 @@ export const reviewController = {
       if (!id) {
          return res.status(400).json({ error: 'Product ID is required' });
       }
-      const reviews = await reviewService.getReviews(id as string);
+      const reviews = await reviewRepositories.getReviews(id as string);
       res.json(reviews);
    },
    summarizeReviews: async (req: Request, res: Response) => {

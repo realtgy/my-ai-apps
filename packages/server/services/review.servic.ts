@@ -1,14 +1,9 @@
-import type { Review } from '@prisma/client';
 import { reviewRepositories } from '../repositories/review.repositories';
 import { llmClient } from '../llm/client';
 import summarizeReviewsPrompt from '../prompts/sumarize-reviews.txt';
 import dayjs from 'dayjs';
 
 export const reviewService = {
-   getReviews: async (productId: string): Promise<Review[]> => {
-      const reviews = await reviewRepositories.getReviews(productId);
-      return reviews;
-   },
    /**
     * Summarize the reviews for a given product ID
     * @param productId - The ID of the product
